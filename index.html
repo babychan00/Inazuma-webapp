@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>イナズマ選手図鑑（ページ対応）</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="header-top">
+      <h1>⚡ イナズマ選手図鑑</h1>
+      <div class="header-actions">
+        <button id="add-player-btn" class="add-btn">＋ 新規追加</button>
+        <button id="add-page-btn" class="page-add-btn">＋ ページ作成</button>
+      </div>
+    </div>
+
+    <!-- ページタブ -->
+    <nav id="pages-nav" class="pages-nav" aria-label="ページ切替">
+      <div id="pages-container" class="pages-container"></div>
+    </nav>
+  </header>
+
+  <main>
+    <section id="card-section">
+      <div id="player-list" class="grid"></div>
+    </section>
+  </main>
+
+  <!-- モーダル -->
+  <div id="modal" class="modal" aria-hidden="true">
+    <div class="modal-content">
+      <button id="close-modal" class="close" aria-label="閉じる">&times;</button>
+      <h2 id="modal-title">選手編集</h2>
+
+      <form id="edit-form" autocomplete="off">
+        <input type="hidden" id="edit-id" value="" />
+
+        <label>名前:
+          <input type="text" id="edit-name" required />
+        </label>
+
+        <!-- アイコン画像（1枚） -->
+        <div class="icon-row">
+          <label>アイコン画像:
+            <input type="file" id="edit-icon-input" accept="image/*" />
+          </label>
+          <div id="edit-icon-preview" class="icon-preview"></div>
+        </div>
+
+        <!-- 性別 / 属性 -->
+        <div class="row-inline">
+          <div class="field-inline">
+            <div class="field-label">性別</div>
+            <label class="radio"><input type="radio" name="edit-gender" value="男" id="edit-gender-male"> 男</label>
+            <label class="radio"><input type="radio" name="edit-gender" value="女" id="edit-gender-female"> 女</label>
+          </div>
+
+          <div class="field-inline">
+            <label>属性
+              <select id="edit-attribute">
+                <option value="">— 選択してください —</option>
+                <option value="風">風</option>
+                <option value="林">林</option>
+                <option value="火">火</option>
+                <option value="山">山</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <label>運用ポジション:
+          <select id="edit-position" >
+            <option value="">— 選択してください —</option>
+            <option value="FW">FW</option>
+            <option value="MF">MF</option>
+            <option value="DF">DF</option>
+            <option value="GK">GK</option>
+          </select>
+        </label>
+
+        <!-- 基礎（レベル99） -->
+        <fieldset class="stats-grid">
+          <legend>
+            基礎（レベル99） — 10項目
+            <span class="total-label">合計 (GP/TP除く): <span id="base-total">0</span></span>
+          </legend>
+
+          <label><span class="stat-black">GP</span>:
+            <input type="number" id="edit-base-gp" min="0" max="999" />
+          </label>
+
+          <label><span class="stat-black">TP</span>:
+            <input type="number" id="edit-base-tp" min="0" max="999" />
+          </label>
+
+          <label><span class="stat-red">キック</span>:
+            <input type="number" id="edit-base-kick" min="0" max="999" />
+          </label>
+
+          <label><span class="stat-blue">ボディ</span>:
+            <input type="number" id="edit-base-body" min="0" max="999" />
+          </label>
+
+          <label><span class="stat-red">コントロール</span>:
+            <input type="number" id="edit-base-control" min="0" max="999" />
+          </label>
+
+          <label><span class="stat-blue">ガード</span>:
+            <input type="number" id="edit-base-guard" min="0" max="999" />
+          </label>
+
+          <label><span class="stat-green">スピード</span>:
+            <input type="number" id="edit-base-speed" min="0" max="999" />
+          </label>
+
+          <label><span class="stat-green">スタミナ</span>:
+            <input type="number" id="edit-base-stamina" min="0" max="999" />
+          </label>
+
+          <label><span class="stat-blue">ガッツ</span>:
+            <input type="number" id="edit-base-guts" min="0" max="999" />
+          </label>
+
+          <label><span class="stat-black">Free</span>:
+            <input type="number" id="edit-base-free" min="0" max="999" />
+          </label>
+        </fieldset>
+
+        <!-- 育成後（Freeなし） -->
+        <fieldset class="stats-grid">
+          <legend>
+            育成後（Freeなし — 9項目）
+            <span class="total-label">合計 (GP/TP除く): <span id="trained-total">0</span></span>
+          </legend>
+
+          <label><span class="stat-black">GP</span>:
+            <input type="number" id="edit-trained-gp" min="0" max="999" />
+          </label>
+
+          <label><span class="stat-black">TP</span>:
+            <input type="number" id="edit-trained-tp" min="0" max="999" />
+          </label>
+
+          <label><span class="stat-red">キック</span>:
+            <input type="number" id="edit-trained-kick" min="0" max="999" />
+          </label>
+
+          <label><span class="stat-blue">ボディ</span>:
+            <input type="number" id="edit-trained-body" min="0" max="999" />
+          </label>
+
+          <label><span class="stat-red">コントロール</span>:
+            <input type="number" id="edit-trained-control" min="0" max="999" />
+          </label>
+
+          <label><span class="stat-blue">ガード</span>:
+            <input type="number" id="edit-trained-guard" min="0" max="999" />
+          </label>
+
+          <label><span class="stat-green">スピード</span>:
+            <input type="number" id="edit-trained-speed" min="0" max="999" />
+          </label>
+
+          <label><span class="stat-green">スタミナ</span>:
+            <input type="number" id="edit-trained-stamina" min="0" max="999" />
+          </label>
+
+          <label><span class="stat-blue">ガッツ</span>:
+            <input type="number" id="edit-trained-guts" min="0" max="999" />
+          </label>
+
+          <!-- A/B/C 合計（育成後のみ） -->
+          <div class="category-totals">
+            <div>Aカテ : <strong id="cat-a">0</strong></div>
+            <div>Bカテ : <strong id="cat-b">0</strong></div>
+            <div>Cカテ : <strong id="cat-c">0</strong></div>
+          </div>
+        </fieldset>
+
+        <!-- 習得技（レベルアップで覚える4枠） -->
+        <fieldset class="skill-grid">
+          <legend>習得技（レベルアップで習得・4つ）</legend>
+          <label>技1: <input type="text" id="edit-skill-1" /></label>
+          <label>技2: <input type="text" id="edit-skill-2" /></label>
+          <label>技3: <input type="text" id="edit-skill-3" /></label>
+          <label>技4: <input type="text" id="edit-skill-4" /></label>
+        </fieldset>
+
+        <!-- 秘伝書で後付する必殺技（2枠） -->
+        <fieldset class="skill-grid">
+          <legend>秘伝書（後付必殺技・2つ）</legend>
+          <label>秘伝1: <input type="text" id="edit-extra-1" /></label>
+          <label>秘伝2: <input type="text" id="edit-extra-2" /></label>
+        </fieldset>
+
+        <!-- メモ（育成段階メモ） -->
+        <label>育成メモ（育成段階・メモ）:
+          <textarea id="edit-memo" rows="4" placeholder="例: レベル30でキック+5、秘伝書は未使用"></textarea>
+        </label>
+
+        <!-- 参考画像（複数可） -->
+        <label>参考画像（複数可）:
+          <input type="file" id="edit-images-input" accept="image/*" multiple />
+        </label>
+        <div id="edit-images-preview" class="images-preview"></div>
+        <small class="note">※ アイコンは選手のカードに表示されます。参考画像は出力に含めません。</small>
+
+        <div class="modal-actions">
+          <button type="button" id="export-image-btn" class="secondary">画像出力</button>
+          <button type="submit" class="primary">保存</button>
+          <button type="button" id="delete-btn" class="danger">削除</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Lightbox: 画像拡大表示用 -->
+  <div id="lightbox" class="lightbox" aria-hidden="true">
+    <div class="lightbox-inner">
+      <button id="lightbox-close" class="lightbox-close" aria-label="閉じる">×</button>
+      <img id="lightbox-img" src="" alt="preview" />
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
